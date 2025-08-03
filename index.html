@@ -1,0 +1,841 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Business Card Challenge</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #1f3b4d 0%, #2c5c75 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            color: #f0f8ff;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1000px;
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            display: none;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* Welcome Screen */
+        #welcome-screen {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 50px 30px;
+            text-align: center;
+        }
+
+        .logo {
+            font-size: 5rem;
+            margin-bottom: 20px;
+            color: #ffd700;
+            text-shadow: 0 0 15px rgba(255, 215, 0, 0.5);
+        }
+
+        h1 {
+            font-size: 2.8rem;
+            margin-bottom: 15px;
+            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+            background: linear-gradient(45deg, #ffd700, #ffb347);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            font-weight: 700;
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            margin-bottom: 40px;
+            max-width: 600px;
+            line-height: 1.6;
+            color: #e0f7ff;
+        }
+
+        .input-group {
+            width: 100%;
+            max-width: 400px;
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        input {
+            width: 100%;
+            padding: 15px 20px;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            background: rgba(255, 255, 255, 0.9);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            color: #1f3b4d;
+            font-weight: 500;
+        }
+
+        input:focus {
+            outline: none;
+            box-shadow: 0 5px 20px rgba(255, 215, 0, 0.4);
+            transform: translateY(-3px);
+        }
+
+        .btn {
+            background: linear-gradient(45deg, #1a936f, #88d498);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(26, 147, 111, 0.4);
+            margin: 10px;
+        }
+
+        .btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(26, 147, 111, 0.6);
+        }
+
+        .btn:active {
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(45deg, #2c5c75, #5ca0d3);
+            box-shadow: 0 5px 15px rgba(44, 92, 117, 0.4);
+        }
+
+        .btn-secondary:hover {
+            box-shadow: 0 8px 20px rgba(44, 92, 117, 0.6);
+        }
+
+        .btn-disabled {
+            background: linear-gradient(45deg, #6c757d, #adb5bd);
+            cursor: not-allowed;
+        }
+
+        .btn-disabled:hover {
+            transform: none;
+            box-shadow: 0 5px 15px rgba(108, 117, 125, 0.4);
+        }
+
+        /* Game Screen */
+        #game-screen {
+            padding: 30px;
+            display: none;
+        }
+
+        .game-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding: 0 15px;
+        }
+
+        .player-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .player-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(45deg, #ff9a9e, #fad0c4);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #1f3b4d;
+        }
+
+        .timer {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 10px 25px;
+            border-radius: 50px;
+            font-size: 1.5rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .timer i {
+            color: #ffd700;
+        }
+
+        .game-board {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            min-height: 500px;
+        }
+
+        .column {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .column-title {
+            text-align: center;
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+            text-shadow: 0 2px 3px rgba(0, 0, 0, 0.3);
+            padding-bottom: 10px;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+            color: #ffd700;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.92);
+            color: #1f3b4d;
+            padding: 20px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+            min-height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            font-size: 1.1rem;
+            font-weight: 500;
+            border-left: 5px solid #1a936f;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .card.selected {
+            transform: translateY(-5px);
+            box-shadow: 0 0 0 3px #ffd700;
+        }
+
+        .card.matched {
+            opacity: 0.5;
+            transform: scale(0.95);
+            pointer-events: none;
+        }
+
+        .card.question:before {
+            content: "Q";
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            font-weight: bold;
+            color: #1a936f;
+            font-size: 0.9rem;
+        }
+
+        .card.answer:before {
+            content: "A";
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            font-weight: bold;
+            color: #2c5c75;
+            font-size: 0.9rem;
+        }
+
+        /* Score Screen */
+        #score-screen {
+            padding: 50px 30px;
+            text-align: center;
+            display: none;
+        }
+
+        .score-title {
+            font-size: 3rem;
+            margin-bottom: 30px;
+            color: #ffd700;
+        }
+
+        .result-container {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 30px;
+            margin: 30px auto;
+            max-width: 500px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 15px 0;
+            font-size: 1.3rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .result-value {
+            font-weight: bold;
+            color: #ffd700;
+        }
+
+        .leaderboard {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 20px;
+            margin-top: 40px;
+            max-width: 700px;
+            margin: 30px auto;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .leaderboard h3 {
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            color: #ffd700;
+        }
+
+        .leaderboard-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 20px;
+            background: rgba(255, 255, 255, 0.03);
+            margin: 10px 0;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .leaderboard-item:hover {
+            background: rgba(255, 255, 255, 0.08);
+            transform: translateX(5px);
+        }
+
+        .leaderboard-item.you {
+            background: rgba(255, 215, 0, 0.15);
+            border-left: 4px solid #ffd700;
+        }
+
+        .rank {
+            font-weight: bold;
+            color: #ffd700;
+            min-width: 30px;
+        }
+
+        .player-name {
+            flex-grow: 1;
+            text-align: left;
+            padding-left: 20px;
+        }
+
+        .player-score {
+            min-width: 80px;
+            text-align: right;
+        }
+
+        .player-time {
+            min-width: 100px;
+            text-align: right;
+            font-family: monospace;
+        }
+
+        .message {
+            background: rgba(255, 215, 0, 0.15);
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px auto;
+            max-width: 500px;
+            border-left: 4px solid #ffd700;
+        }
+
+        /* Animations */
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .pulse {
+            animation: pulse 1.5s infinite;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .game-board {
+                grid-template-columns: 1fr;
+            }
+            
+            .game-header {
+                flex-direction: column;
+                gap: 20px;
+            }
+            
+            h1 {
+                font-size: 2.2rem;
+            }
+            
+            .leaderboard-item {
+                flex-wrap: wrap;
+                gap: 10px;
+            }
+            
+            .player-name {
+                min-width: 100%;
+                padding-left: 0;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Welcome Screen -->
+    <div id="welcome-screen" class="container">
+        <div class="logo">
+            <i class="fas fa-chart-line"></i>
+        </div>
+        <h1>Business Card Challenge</h1>
+        <p class="subtitle">Match economic concepts with their definitions. Test your business knowledge against the clock!</p>
+        
+        <div class="input-group">
+            <input type="text" id="player-name" placeholder="Enter your name" autocomplete="off">
+        </div>
+        
+        <button id="start-btn" class="btn">
+            <i class="fas fa-play"></i> Start Challenge
+        </button>
+        <button id="view-leaderboard" class="btn btn-secondary">
+            <i class="fas fa-trophy"></i> View Leaderboard
+        </button>
+    </div>
+
+    <!-- Game Screen -->
+    <div id="game-screen" class="container">
+        <div class="game-header">
+            <div class="player-info">
+                <div class="player-icon" id="player-initial">?</div>
+                <h2 id="current-player">Player</h2>
+            </div>
+            <div class="timer">
+                <i class="fas fa-clock"></i>
+                <span id="time">02:00</span>
+            </div>
+        </div>
+        
+        <div class="game-board">
+            <div class="column">
+                <h3 class="column-title">Business Concepts</h3>
+                <div id="questions-container"></div>
+            </div>
+            
+            <div class="column">
+                <h3 class="column-title">Definitions</h3>
+                <div id="answers-container"></div>
+            </div>
+        </div>
+        
+        <div style="text-align: center; margin-top: 30px;">
+            <button id="finish-btn" class="btn">
+                <i class="fas fa-flag-checkered"></i> Finish Challenge
+            </button>
+        </div>
+    </div>
+
+    <!-- Score Screen -->
+    <div id="score-screen" class="container">
+        <h2 class="score-title">Challenge Results</h2>
+        
+        <div class="result-container">
+            <div class="result-item">
+                <span>Participant:</span>
+                <span class="result-value" id="result-name">Player</span>
+            </div>
+            <div class="result-item">
+                <span>Correct Matches:</span>
+                <span class="result-value" id="result-score">0</span>
+            </div>
+            <div class="result-item">
+                <span>Time Spent:</span>
+                <span class="result-value" id="result-time">00:00</span>
+            </div>
+        </div>
+        
+        <div class="message">
+            <i class="fas fa-info-circle"></i> Each device can only play once. Your result has been recorded.
+        </div>
+        
+        <div class="leaderboard">
+            <h3><i class="fas fa-trophy"></i> Economics Leaderboard</h3>
+            <div id="leaderboard-container"></div>
+        </div>
+        
+        <button id="new-player" class="btn btn-secondary">
+            <i class="fas fa-user"></i> New Participant
+        </button>
+    </div>
+
+    <script>
+        // Business and Economics questions and answers
+        const questions = [
+            "What is GDP?",
+            "Define 'Inflation'",
+            "What is a 'Bear Market'?",
+            "What does ROI stand for?",
+            "Define 'Opportunity Cost'",
+            "What is 'Supply and Demand'?",
+            "What is 'Fiscal Policy'?",
+            "Define 'Monopoly'",
+            "What is 'Compound Interest'?",
+            "What is 'Macroeconomics'?"
+        ];
+
+        const answers = [
+            "Gross Domestic Product - Total value of goods produced",
+            "Rise in general price levels reducing purchasing power",
+            "Market where prices are falling or expected to fall",
+            "Return on Investment - Measure of profitability",
+            "Cost of the next best alternative foregone",
+            "Relationship between product availability and desire",
+            "Government spending and tax policies",
+            "Exclusive control of a commodity or service",
+            "Interest calculated on initial principal and accumulated interest",
+            "Study of economy-wide phenomena like inflation"
+        ];
+
+        // Game state
+        let gameState = {
+            playerName: "",
+            score: 0,
+            timeLimit: 120, // 2 minutes in seconds
+            timeSpent: 0,
+            timer: null,
+            selectedQuestion: null,
+            matchedPairs: [],
+            leaderboard: JSON.parse(localStorage.getItem('leaderboard')) || [],
+            startTime: null,
+            hasPlayed: localStorage.getItem('hasPlayed') === 'true'
+        };
+
+        // DOM Elements
+        const welcomeScreen = document.getElementById('welcome-screen');
+        const gameScreen = document.getElementById('game-screen');
+        const scoreScreen = document.getElementById('score-screen');
+        const playerNameInput = document.getElementById('player-name');
+        const startBtn = document.getElementById('start-btn');
+        const finishBtn = document.getElementById('finish-btn');
+        const newPlayerBtn = document.getElementById('new-player');
+        const viewLeaderboardBtn = document.getElementById('view-leaderboard');
+        const timeDisplay = document.getElementById('time');
+        const playerInitial = document.getElementById('player-initial');
+        const currentPlayer = document.getElementById('current-player');
+        const questionsContainer = document.getElementById('questions-container');
+        const answersContainer = document.getElementById('answers-container');
+        const resultName = document.getElementById('result-name');
+        const resultScore = document.getElementById('result-score');
+        const resultTime = document.getElementById('result-time');
+        const leaderboardContainer = document.getElementById('leaderboard-container');
+
+        // Initialize game
+        function initGame() {
+            if (gameState.hasPlayed) {
+                alert("Each device can only play once. You've already completed the challenge.");
+                return;
+            }
+            
+            // Mark device as played
+            localStorage.setItem('hasPlayed', 'true');
+            gameState.hasPlayed = true;
+            
+            // Reset game state
+            gameState.score = 0;
+            gameState.timeSpent = 0;
+            gameState.selectedQuestion = null;
+            gameState.matchedPairs = [];
+            
+            // Set player name
+            gameState.playerName = playerNameInput.value.trim() || "Participant";
+            playerInitial.textContent = gameState.playerName.charAt(0).toUpperCase();
+            currentPlayer.textContent = gameState.playerName;
+            
+            // Generate cards
+            generateCards();
+            
+            // Show game screen
+            welcomeScreen.style.display = 'none';
+            gameScreen.style.display = 'flex';
+            scoreScreen.style.display = 'none';
+            
+            // Start timer
+            startTimer();
+        }
+
+        // Generate question and answer cards
+        function generateCards() {
+            questionsContainer.innerHTML = '';
+            answersContainer.innerHTML = '';
+            
+            // Shuffle questions and answers
+            const shuffledQuestions = [...questions].sort(() => Math.random() - 0.5);
+            const shuffledAnswers = [...answers].sort(() => Math.random() - 0.5);
+            
+            // Create question cards
+            shuffledQuestions.forEach((question, index) => {
+                const card = document.createElement('div');
+                card.className = 'card question';
+                card.textContent = question;
+                card.dataset.index = index;
+                card.addEventListener('click', () => selectCard(card, 'question'));
+                questionsContainer.appendChild(card);
+            });
+            
+            // Create answer cards
+            shuffledAnswers.forEach((answer, index) => {
+                const card = document.createElement('div');
+                card.className = 'card answer';
+                card.textContent = answer;
+                card.dataset.index = index;
+                card.addEventListener('click', () => selectCard(card, 'answer'));
+                answersContainer.appendChild(card);
+            });
+        }
+
+        // Select a card
+        function selectCard(card, type) {
+            // If card is already matched, do nothing
+            if (card.classList.contains('matched')) return;
+            
+            // If we're selecting a question
+            if (type === 'question') {
+                // Deselect previous question
+                if (gameState.selectedQuestion) {
+                    gameState.selectedQuestion.classList.remove('selected');
+                }
+                
+                // Select new question
+                card.classList.add('selected');
+                gameState.selectedQuestion = card;
+            }
+            // If we're selecting an answer and a question is already selected
+            else if (type === 'answer' && gameState.selectedQuestion) {
+                // Get question and answer text
+                const questionText = gameState.selectedQuestion.textContent;
+                const answerText = card.textContent;
+                
+                // Check if it's a match
+                const questionIndex = questions.indexOf(questionText);
+                const isCorrect = answers[questionIndex] === answerText;
+                
+                // Mark as matched
+                gameState.selectedQuestion.classList.add('matched');
+                card.classList.add('matched');
+                
+                // Update score if correct
+                if (isCorrect) {
+                    gameState.score++;
+                }
+                
+                // Add to matched pairs
+                gameState.matchedPairs.push({
+                    question: questionText,
+                    answer: answerText,
+                    correct: isCorrect
+                });
+                
+                // Reset selection
+                gameState.selectedQuestion.classList.remove('selected');
+                gameState.selectedQuestion = null;
+                
+                // Check if all pairs are matched
+                if (gameState.matchedPairs.length === questions.length) {
+                    endGame();
+                }
+            }
+        }
+
+        // Start the timer
+        function startTimer() {
+            clearInterval(gameState.timer);
+            
+            gameState.startTime = Date.now();
+            
+            gameState.timer = setInterval(() => {
+                // Calculate time spent in seconds
+                const elapsedSeconds = Math.floor((Date.now() - gameState.startTime) / 1000);
+                gameState.timeSpent = elapsedSeconds;
+                
+                // Calculate remaining time for display
+                const remainingTime = gameState.timeLimit - elapsedSeconds;
+                
+                // Update timer display
+                const minutes = Math.floor(remainingTime / 60);
+                const seconds = remainingTime % 60;
+                timeDisplay.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                
+                // Flash when time is low
+                if (remainingTime <= 10) {
+                    timeDisplay.parentElement.classList.add('pulse');
+                }
+                
+                // End game when time is up
+                if (remainingTime <= 0) {
+                    endGame();
+                }
+            }, 1000);
+        }
+
+        // End the game
+        function endGame() {
+            clearInterval(gameState.timer);
+            
+            // Calculate time spent (capped at timeLimit)
+            const timeSpent = Math.min(gameState.timeSpent, gameState.timeLimit);
+            
+            // Save to leaderboard
+            gameState.leaderboard.push({
+                name: gameState.playerName,
+                score: gameState.score,
+                timeSpent: timeSpent,
+                date: new Date().toISOString()
+            });
+            
+            // Sort leaderboard by score (descending) then time spent (ascending)
+            gameState.leaderboard.sort((a, b) => {
+                if (b.score !== a.score) return b.score - a.score;
+                return a.timeSpent - b.timeSpent;
+            });
+            
+            // Keep only top 10 scores
+            if (gameState.leaderboard.length > 10) {
+                gameState.leaderboard = gameState.leaderboard.slice(0, 10);
+            }
+            
+            // Save to localStorage
+            localStorage.setItem('leaderboard', JSON.stringify(gameState.leaderboard));
+            
+            // Show score screen
+            showScoreScreen();
+        }
+
+        // Show score screen
+        function showScoreScreen() {
+            gameScreen.style.display = 'none';
+            scoreScreen.style.display = 'flex';
+            
+            // Update results
+            resultName.textContent = gameState.playerName;
+            resultScore.textContent = gameState.score;
+            
+            // Format time spent
+            const minutes = Math.floor(gameState.timeSpent / 60);
+            const seconds = gameState.timeSpent % 60;
+            resultTime.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            
+            // Update leaderboard
+            updateLeaderboard();
+        }
+
+        // Update leaderboard display
+        function updateLeaderboard() {
+            leaderboardContainer.innerHTML = '';
+            
+            gameState.leaderboard.forEach((player, index) => {
+                const item = document.createElement('div');
+                item.className = 'leaderboard-item';
+                if (player.name === gameState.playerName) {
+                    item.classList.add('you');
+                }
+                
+                // Format time spent
+                const minutes = Math.floor(player.timeSpent / 60);
+                const seconds = player.timeSpent % 60;
+                const timeString = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                
+                item.innerHTML = `
+                    <div class="rank">${index + 1}</div>
+                    <div class="player-name">${player.name}</div>
+                    <div class="player-score">${player.score}</div>
+                    <div class="player-time">${timeString}</div>
+                `;
+                
+                leaderboardContainer.appendChild(item);
+            });
+        }
+
+        // View leaderboard from welcome screen
+        function viewLeaderboard() {
+            // Set dummy player name
+            gameState.playerName = "Leaderboard";
+            
+            // Show leaderboard
+            showScoreScreen();
+            welcomeScreen.style.display = 'none';
+            scoreScreen.style.display = 'flex';
+            
+            // Update title
+            document.querySelector('.score-title').textContent = "Economics Leaderboard";
+            document.querySelector('.result-container').style.display = 'none';
+            document.querySelector('.message').style.display = 'none';
+        }
+
+        // Event listeners
+        startBtn.addEventListener('click', initGame);
+
+        finishBtn.addEventListener('click', endGame);
+        
+        newPlayerBtn.addEventListener('click', () => {
+            scoreScreen.style.display = 'none';
+            welcomeScreen.style.display = 'flex';
+            playerNameInput.value = '';
+            document.querySelector('.result-container').style.display = 'block';
+            document.querySelector('.message').style.display = 'block';
+            document.querySelector('.score-title').textContent = "Challenge Results";
+        });
+        
+        viewLeaderboardBtn.addEventListener('click', viewLeaderboard);
+        
+        // Enter key to start game
+        playerNameInput.addEventListener('keyup', (e) => {
+            if (e.key === 'Enter') {
+                startBtn.click();
+            }
+        });
+
+        // Check if already played on page load
+        window.addEventListener('load', () => {
+            if (gameState.hasPlayed) {
+                startBtn.classList.add('btn-disabled');
+                startBtn.innerHTML = '<i class="fas fa-lock"></i> Challenge Completed';
+                playerNameInput.placeholder = "You've already completed the challenge";
+                playerNameInput.disabled = true;
+            }
+            
+            // Initialize welcome screen
+            welcomeScreen.style.display = 'flex';
+        });
+    </script>
+</body>
+</html>
